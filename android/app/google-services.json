@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "850628785325",
+    "project_id": "lapor-book-4f7ea",
+    "storage_bucket": "lapor-book-4f7ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850628785325:android:a837d228dde65033b0c224",
+        "android_client_info": {
+          "package_name": "com.example.lapor_book"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOdILs1vvPKFJGdAl1Mo59nNwN27ZjUIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850628785325:android:5882760bab539729b0c224",
+        "android_client_info": {
+          "package_name": "com.example.lapor_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOdILs1vvPKFJGdAl1Mo59nNwN27ZjUIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
