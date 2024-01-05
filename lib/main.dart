@@ -6,6 +6,7 @@ import 'package:lapor_firebase/pages/SplashPage.dart';
 import 'package:lapor_firebase/pages/dashboard/DashboardPage.dart';
 import 'package:lapor_firebase/pages/LoginPage.dart';
 import 'package:lapor_firebase/pages/AddFormPage.dart';
+import 'package:lapor_firebase/pages/DetailPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +22,7 @@ void main() async {
       '/register': (context) => const RegisterPage(),
       '/dashboard': (context) => const DashboardPage(),
       '/add': (context) => AddFormPage(),
-      // '/detail': (context) => DetailPage(),
+      '/detail': (context) => DetailPage(),
     },
   ));
 }

@@ -26,6 +26,7 @@ class DashboardFull extends StatefulWidget {
 class _DashboardFull extends State<DashboardFull> {
   int _selectedIndex = 0;
   List<Widget> pages =[];
+  bool _isLoading = false;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -80,8 +81,6 @@ class _DashboardFull extends State<DashboardFull> {
       });
     }
   }
-
-  bool _isLoading = false;
 
   void initState(){
     super.initState();
