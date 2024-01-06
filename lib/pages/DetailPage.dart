@@ -1,4 +1,5 @@
-  import 'package:flutter/material.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
   //import 'package:lapor_firebase/components/komen_dialog.dart';
   import 'package:lapor_firebase/components/status_dialog.dart';
   import 'package:lapor_firebase/components/styles.dart';
@@ -14,25 +15,15 @@
   }
 
   class _DetailPageState extends State<DetailPage> {
+    final _firestore = FirebaseFirestore.instance;
     bool _isLoading = false;
-    String? status;
+    bool isShow = true;
 
     Future launch(String uri) async {
       if (uri == '') return;
       if (!await launchUrl(Uri.parse(uri))) {
         throw Exception('Tidak dapat memanggil : $uri');
       }
-    }
-
-    void statusDialog(Laporan laporan) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatusDialog(
-            laporan: laporan,
-          );
-        },
-      );
     }
 
     @override
@@ -43,6 +34,37 @@
       Laporan laporan = arguments['laporan'];
       Akun akun = arguments['akun'];
 
+      laporan.like?.forEach((element) {
+        if (element.email == akun.email) {
+          print(element.email);
+          setState(() {
+            isShow = false;
+          });
+        }
+      });
+
+      void likePost() async {
+        CollectionReference laporanCollection = _firestore.collection('laporan');
+        try {
+          await laporanCollection.doc(laporan.docId).update({
+            'likes': FieldValue.arrayUnion([
+              {
+                'email': akun.email,
+                'docId': akun.nama,
+                'timestamp': DateTime.now(),
+              }
+            ])
+          });
+        } catch (e) {
+          final snackbar = SnackBar(content: Text(e.toString()));
+          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        } finally {
+          setState(() {
+            isShow = !isShow;
+          });
+        }
+      }
+
       return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
@@ -50,6 +72,14 @@
               Text('Detail Laporan', style: headerStyle(level: 3, dark: false)),
           centerTitle: true,
         ),
+        floatingActionButton: isShow
+            ? FloatingActionButton(
+              backgroundColor: Colors.white,
+              onPressed: () {
+                likePost();
+              },
+              child: Icon(Icons.favorite))
+            : null,      
         body: SafeArea(
           child: _isLoading
               ? const Center(
@@ -118,17 +148,20 @@
                         Container(
                           width: double.infinity,
                           margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(laporan.deskripsi ?? ''),
+                          child: Text(laporan.deskripsi ?? '',
+                          textAlign: TextAlign.center,),
                         ),
+                        SizedBox(height: 30),
                         if (akun.role == 'admin')
                         Container(
-                          width: 250,
+                          width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                status = laporan.status;
-                              });
-                              statusDialog(laporan);
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return StatusDialog(laporan: laporan ,);
+                                  });
                             },
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.white,
