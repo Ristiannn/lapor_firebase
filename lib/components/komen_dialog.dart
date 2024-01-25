@@ -1,85 +1,104 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lapor_firebase/models/laporan.dart';
+import 'package:flutter/material.dart';
+import 'package:lapor_firebase/components/styles.dart';
 import 'package:lapor_firebase/models/akun.dart';
+import 'package:lapor_firebase/models/laporan.dart';
 
-class KomentarWidget extends StatefulWidget {
-  final Laporan laporan;
+class KomenDialog extends StatefulWidget {
   final Akun akun;
-  const KomentarWidget({Key? key, required this.laporan, required this.akun})
-      : super(key: key);
+  final Laporan laporan;
+
+  const KomenDialog({
+    required this.akun,
+    required this.laporan,
+  });
 
   @override
-  _KomentarWidgetState createState() => _KomentarWidgetState();
+  _KomenDialogState createState() => _KomenDialogState();
 }
 
-class _KomentarWidgetState extends State<KomentarWidget> {
-  final _komentarController = TextEditingController();
+class _KomenDialogState extends State<KomenDialog> {
+  late String status;
   final _firestore = FirebaseFirestore.instance;
 
-  void postKomentar() async {
-    String commentText = _komentarController.text.trim();
+  TextEditingController _komenController = TextEditingController();
 
-    if (commentText.isNotEmpty) {
-      String userName = widget.akun.nama; 
+  void addKomentar() async {
+    CollectionReference transaksiCollection = _firestore.collection('laporan');
 
-      await _firestore.collection('laporan').doc(widget.laporan.docId).update({
-        'komentar': FieldValue.arrayUnion([
-          {
-            'nama': userName,
-            'isi': commentText,
-          }
-        ]),
-      });
+    // Convert DateTime to Firestore Timestamp
 
-      
-      setState(() {
-        widget.laporan.komentar
-            ?.add(Komentar(nama: userName, isi: commentText));
-      });
+    try {
+      if (_komenController.text != '') {
+        await transaksiCollection.doc(widget.laporan.docId).update({
+          'komentar': FieldValue.arrayUnion([
+            {
+              'nama': widget.akun.nama,
+              'isi': _komenController.text,
+            }
+          ]),
+        });
+      }
 
-      _komentarController.clear();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Komentar tidak boleh kosong')),
-      );
+      Navigator.popAndPushNamed(context, '/dashboard');
+    } catch (e) {
+      print(e);
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.laporan.komentar?.isEmpty ?? true)
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Belum ada komentar'),
-          ),
-        ...widget.laporan.komentar?.map((komentar) => Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(komentar.nama,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(komentar.isi),
-                  ),
-                )) ??
-            [],
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _komentarController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Tambah Komentar',
-              suffixIcon: IconButton(
-                icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
-                onPressed: postKomentar,
+    return AlertDialog(
+      backgroundColor: primaryColor,
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        padding: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              widget.laporan.judul,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextField(
+                controller: _komenController,
+                minLines: 5,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: 'Komentar',
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
               ),
             ),
-          ),
+            ElevatedButton(
+              onPressed: () {
+                addKomentar();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text('Tambah Komentar'),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

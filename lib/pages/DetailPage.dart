@@ -26,6 +26,29 @@ import 'package:lapor_firebase/components/komen_dialog.dart';
       }
     }
 
+    void statusDialog(Laporan laporan) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatusDialog(
+            laporan: laporan,
+          );
+        },
+      );
+    }
+
+    void komentarDialog(Akun akun, Laporan laporan) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return KomenDialog(
+            laporan: laporan,
+            akun: akun,
+          );
+        },
+      );
+    }
+
     @override
     Widget build(BuildContext context) {
       final arguments =
@@ -173,22 +196,65 @@ import 'package:lapor_firebase/components/komen_dialog.dart';
                             child: const Text('Ubah Status'),
                           )
                         ),
-                        const SizedBox(height: 50),
-                      Text('List Komentar', style: headerStyle(level: 3)),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        child: KomentarWidget(
-                          laporan: laporan,
-                          akun: akun,
+                        Container(
+                          width: 250,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              komentarDialog(akun, laporan);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text('Tambah Komentar'),
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 20),
+                        Text(
+                          'List Komentar',
+                          style: headerStyle(level:3),
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 400),
+                          child: ListView.builder(
+                              itemCount: laporan.komentar?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  padding: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        laporan.komentar![index].nama,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        laporan.komentar![index].isi,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
                       ],
                     ),
-                  ),
-                ),
+                  );
+                }),
         ),
+       ],
+                    ),
+                  ),
+              ),
+        ), 
       );
     }
 
