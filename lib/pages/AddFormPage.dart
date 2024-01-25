@@ -233,7 +233,7 @@ class _AddFormPageState extends State<AddFormPage> {
                               },
                             )),
                       InputLayout(
-                          "Deskripsi laporan",
+                          "Deskripsi Lengkap",
                           TextFormField(
                             onChanged: (value) =>{
                               setState(() {

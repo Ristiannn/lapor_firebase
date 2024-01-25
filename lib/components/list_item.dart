@@ -130,10 +130,8 @@ class _ListItemState extends State<ListItem> {
                               vertical: BorderSide(width: 1))),
                       alignment: Alignment.center,
                       child: Text(
-                        "${
-                          widget.laporan.like == null ? 0 : widget.laporan.like?.length
-                        } Likes",
-                        style: headerStyle(level: 5, dark: false),
+                        DateFormat('dd/MM/yyyy').format(widget.laporan.tanggal),
+                      style: headerStyle(level: 5, dark: false),
                       ),
                     ),
                   )

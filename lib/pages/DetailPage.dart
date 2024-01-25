@@ -1,6 +1,6 @@
   import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-  //import 'package:lapor_firebase/components/komen_dialog.dart';
+  import 'package:flutter/material.dart';
+import 'package:lapor_firebase/components/komen_dialog.dart';
   import 'package:lapor_firebase/components/status_dialog.dart';
   import 'package:lapor_firebase/components/styles.dart';
   import 'package:lapor_firebase/models/akun.dart';
@@ -34,36 +34,36 @@ import 'package:flutter/material.dart';
       Laporan laporan = arguments['laporan'];
       Akun akun = arguments['akun'];
 
-      laporan.like?.forEach((element) {
-        if (element.email == akun.email) {
-          print(element.email);
-          setState(() {
-            isShow = false;
-          });
-        }
-      });
+      //laporan.like?.forEach((element) {
+        //if (element.email == akun.email) {
+          //print(element.email);
+          //setState(() {
+            //isShow = false;
+          //});
+        //}
+      //});
 
-      void likePost() async {
-        CollectionReference laporanCollection = _firestore.collection('laporan');
-        try {
-          await laporanCollection.doc(laporan.docId).update({
-            'likes': FieldValue.arrayUnion([
-              {
-                'email': akun.email,
-                'docId': akun.nama,
-                'timestamp': DateTime.now(),
-              }
-            ])
-          });
-        } catch (e) {
-          final snackbar = SnackBar(content: Text(e.toString()));
-          ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        } finally {
-          setState(() {
-            isShow = !isShow;
-          });
-        }
-      }
+      //void likePost() async {
+        //CollectionReference laporanCollection = _firestore.collection('laporan');
+        //try {
+          //await laporanCollection.doc(laporan.docId).update({
+            //'likes': FieldValue.arrayUnion([
+              //{
+                //'email': akun.email,
+                //'docId': akun.nama,
+                //'timestamp': DateTime.now(),
+              //}
+            //])
+          //});
+        //} catch (e) {
+          //final snackbar = SnackBar(content: Text(e.toString()));
+          //ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        //} finally {
+          //setState(() {
+            //isShow = !isShow;
+          //});
+        //}
+      //}
 
       return Scaffold(
         appBar: AppBar(
@@ -72,14 +72,14 @@ import 'package:flutter/material.dart';
               Text('Detail Laporan', style: headerStyle(level: 3, dark: false)),
           centerTitle: true,
         ),
-        floatingActionButton: isShow
-            ? FloatingActionButton(
-              backgroundColor: Colors.white,
-              onPressed: () {
-                likePost();
-              },
-              child: Icon(Icons.favorite))
-            : null,      
+        //floatingActionButton: isShow
+            //? FloatingActionButton(
+              //backgroundColor: Colors.white,
+              //onPressed: () {
+                //likePost();
+              //},
+              //child: Icon(Icons.favorite))
+            //: null,      
         body: SafeArea(
           child: _isLoading
               ? const Center(
@@ -172,7 +172,18 @@ import 'package:flutter/material.dart';
                             ),
                             child: const Text('Ubah Status'),
                           )
-                        )
+                        ),
+                        const SizedBox(height: 50),
+                      Text('List Komentar', style: headerStyle(level: 3)),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        child: KomentarWidget(
+                          laporan: laporan,
+                          akun: akun,
+                        ),
+                      ),
                       ],
                     ),
                   ),
